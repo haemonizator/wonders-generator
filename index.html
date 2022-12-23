@@ -47,9 +47,7 @@
                     
                     !race[raceIndex] ? race = raceStorage : '';
                     !specialization[specIndex] ? specialization = specsStorage : '';
-                    console.log(race);
-                    console.log(raceIndex);
-                    console.log('--------------------------');
+  
                     result = result + playersArr[i] + ', играет за связку ' + race[raceIndex] + ' - ' + specialization[specIndex] + '\n';
                     race = race.filter(elem => elem !== race[raceIndex]);
                     specialization = specialization.filter(elem => elem !== specialization[specIndex]);
