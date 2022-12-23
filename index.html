@@ -2,21 +2,53 @@
 <html>
     <body>
 
-        <h1>Генерируем чудеса</h1>
+        <h2>Генерируем чудеса</h2>
         <label>Сюда вводить имена игроков через запятую, или просто число игроков</label><br>
-        <input type="textarea" class="js-input" style="width: 700px;"><br><br>
+        <input class="js-generation-input" style="width: 700px;"><br><br>
 
         <input type="checkbox" class="js-el-dlc">
         <label>Есть длц Eternal Lords (фростлинги, тиграны, некроманты)</label><br>
         <input type="checkbox" class="js-gr-dlc">
         <label>Есть длц Golden Realms (халфлинги)</label><br><br>
         <button class="js-generate">Генерировать</button>
+
+        <hr>
+
+        <h2>Посчитать дамаг/вероятность магии</h2>
+        <label>Считаем дамаг или магию?</label>
+        <div>
+            <input type="radio" id="damage" name="attack-type" checked><label for="damage">Дамаг</label>
+            <input type="radio" id="magic" name="attack-type"><label for="magic">Магию</label>
+        </div>
+        <label>Дамаг атакера</label><br>
+        <input class="js-damage-value"><br><br>
+        <label>Защита цели</label><br>
+        <input class="js-defence-value"><br><br>
+        <label>Резист цели (если есть), в формате нп. "60" если резист 60%</label><br>
+        <input class="js-resistance-value" value="0"><br><br>
+        <button class="js-calculate">Посчитать дамаг</button>
+
     </body>
     <script src="https://code.jquery.com/jquery-3.6.3.slim.min.js" integrity="sha256-ZwqZIVdD3iXNyGHbSYdsmWP//UBokj2FHAxKuSBKDSo=" crossorigin="anonymous"></script>
     <script>
         $(document).ready(() => {
+            $('.js-calculate').on('click', () => {
+                //формула: (10 + (attack - defence)) * (1 - resistance) +-20%
+                let result;
+                if ($('#damage').is(":checked")) {
+                    let result = (10 + ($('.js-damage-value').val() - $('.js-defence-value').val())) * (1 - ($('.js-resistance-value').val() * 0.1));
+                    alert('Дамаг будет от ' + result * 0.75 + ' до ' + result * 1.25 + ' c округлением в хуй знает какую сторону');
+                } else if ($("#magic").is(":checked")) {
+                    let result = 0;
+                    alert('Вероятность успеха магии будет ' + result + '%');
+                } else {
+                    alert("Дебил блять");
+                }
+            });
+
+            //генерация рандомных уникальных связок раса-класс
             $('.js-generate').on('click', () => {
-                const players = $('.js-input').val();
+                const players = $('.js-generation-input').val();
                 const raceStorage = [
                     'Человек',
                     'Дварф',
@@ -53,7 +85,7 @@
                     specialization = specialization.filter(elem => elem !== specialization[specIndex]);
                 }
                 alert(result);
-                $('.js-input').val('');
+                $('.js-generation-input').val('');
             });
         });
     </script>
