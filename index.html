@@ -16,8 +16,8 @@
     <script>
         $(document).ready(() => {
             $('.js-generate').on('click', () => {
-                let players = $('.js-input').val();
-                let race = [
+                const players = $('.js-input').val();
+                const raceStorage = [
                     'Человек',
                     'Дварф',
                     'Драконид',
@@ -25,9 +25,9 @@
                     'Орк',
                     'Эльф',
                     ...$('.js-el-dlc').is(":checked") ? ['Фростлинг', 'Тигран'] : [],
-                    $('.js-gr-dlc').is(":checked") ? ['Халфлинг'] : [],
+                    ...$('.js-gr-dlc').is(":checked") ? ['Халфлинг'] : [],
                 ];
-                let specialization = [
+                const specsStorage = [
                     'Варлорд',
                     'Технократ',
                     'Колдун',
@@ -36,12 +36,20 @@
                     'Теократ',
                     ...$('.js-el-dlc').is(":checked") ? ['Некромант'] : [],
                 ];
+                let race = raceStorage;
+                let specialization = specsStorage;
 
                 const playersArr = isNaN(players) ? players.replaceAll(' ', '').split(',') : [...Array(Number(players)).keys()];
                 let result = '';
                 for (let i = 0; i < playersArr.length; i++) {
                     const raceIndex = Math.floor(Math.random() * (race.length));
                     const specIndex = Math.floor(Math.random() * (specialization.length));
+                    
+                    !race[raceIndex] ? race = raceStorage : '';
+                    !specialization[specIndex] ? specialization = specsStorage : '';
+                    console.log(race);
+                    console.log(raceIndex);
+                    console.log('--------------------------');
                     result = result + playersArr[i] + ', играет за связку ' + race[raceIndex] + ' - ' + specialization[specIndex] + '\n';
                     race = race.filter(elem => elem !== race[raceIndex]);
                     specialization = specialization.filter(elem => elem !== specialization[specIndex]);
