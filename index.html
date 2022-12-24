@@ -1,6 +1,12 @@
 <!DOCTYPE html>
 <html>
     <body>
+		<style>
+			body {
+				background-color: #202124;
+				color: #bdc1c6;
+			}
+		</style>
 
         <h2>Генерируем чудеса</h2>
         <label>Сюда вводить имена игроков через запятую, или просто число игроков</label><br>
@@ -15,32 +21,53 @@
         <hr>
 
         <h2>Посчитать дамаг/вероятность магии</h2>
-        <label>Считаем дамаг или магию?</label>
+        <label>Считаем дамаг или вероятность успеха магии?</label>
         <div>
             <input type="radio" id="damage" name="attack-type" checked><label for="damage">Дамаг</label>
-            <input type="radio" id="magic" name="attack-type"><label for="magic">Магию</label>
-        </div>
-        <label>Дамаг атакера</label><br>
-        <input class="js-damage-value"><br><br>
-        <label>Защита цели</label><br>
-        <input class="js-defence-value"><br><br>
-        <label>Резист цели (если есть), в формате нп. "60" если резист 60%</label><br>
+            <input type="radio" id="magic" name="attack-type"><label for="magic">Успех магии</label>
+        </div><br>
+        <label class="js-damage-label">Урон атакующего</label><br>
+        <input class="js-damage-value" value="0"><br><br>
+        <label class="js-defence-label">Оборона цели</label><br>
+        <input class="js-defence-value" value="0"><br><br>
+        <label>Защита/уязвимость цели (если есть), в формате нп. "60" если резист 60% или "-20" если уязвимость 20%</label><br>
         <input class="js-resistance-value" value="0"><br><br>
         <button class="js-calculate">Посчитать дамаг</button>
 
     </body>
     <script src="https://code.jquery.com/jquery-3.6.3.slim.min.js" integrity="sha256-ZwqZIVdD3iXNyGHbSYdsmWP//UBokj2FHAxKuSBKDSo=" crossorigin="anonymous"></script>
     <script>
+
+
         $(document).ready(() => {
+			//контроль радиопереключалки видов расчёта
+			$('input[type=radio][name=attack-type]').change(() => {
+				$('.js-damage-value').val(0);
+				$('.js-defence-value').val(0);
+				$('.js-resistance-value').val(0);
+				if ($('#damage').is(":checked")) {
+			        $('.js-damage-label').text('Урон атакующего');
+					$('.js-defence-label').text('Оборона цели');
+					$('.js-calculate').text('Посчитать дамаг');
+			    }
+			    else if ($("#magic").is(":checked")) {
+			        $('.js-damage-label').text('Сила заклинания');
+					$('.js-defence-label').text('Резист цели');
+					$('.js-calculate').text('Посчитать вероятность');
+			    }
+			});
+
+
+			//калькулятор дамага
+			//TODO: вероятность успеха магии не всегда верно считается, похоже там какие-то скрытые модификаторы есть
             $('.js-calculate').on('click', () => {
-                //формула: (10 + (attack - defence)) * (1 - resistance) +-20%
-                let result;
+				const resistance = (1 - ($('.js-resistance-value').val() * 0.1));
                 if ($('#damage').is(":checked")) {
-                    let result = (10 + ($('.js-damage-value').val() - $('.js-defence-value').val())) * (1 - ($('.js-resistance-value').val() * 0.1));
-                    alert('Дамаг будет от ' + result * 0.75 + ' до ' + result * 1.25 + ' c округлением в хуй знает какую сторону');
+                    let baseDamage = (10 + ($('.js-damage-value').val() - $('.js-defence-value').val()));
+                    alert('Дамаг будет от ' + baseDamage * 0.75 * resistance + ' до ' + baseDamage * 1.25 * resistance);
                 } else if ($("#magic").is(":checked")) {
-                    let result = 0;
-                    alert('Вероятность успеха магии будет ' + result + '%');
+                    let baseChance = 50 + (5 * ($('.js-damage-value').val() - $('.js-defence-value').val()));
+                    alert('Вероятность успеха магии будет ' + (baseChance * resistance) + '%');
                 } else {
                     alert("Дебил блять");
                 }
